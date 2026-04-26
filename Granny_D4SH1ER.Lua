@@ -3,7 +3,9 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Connection
 
 local function loadGui()
-	if Connection then Connection:Disconnect() end
+	if Connection then
+		Connection:Disconnect()
+	end
 	if game:GetService("CoreGui"):FindFirstChild("Rayfield") then
 		game:GetService("CoreGui").Rayfield:Destroy()
 	end
@@ -23,7 +25,11 @@ local function loadGui()
 		Name = "ZLN HUB | Granny: Multiplayer",
 		LoadingTitle = "ZLN HUB running!...",
 		LoadingSubtitle = "Welcome " .. Player.DisplayName,
-		ConfigurationSaving = {Enabled = true, FolderName = "ZLN_Hub", FileName = "GrannyMP"},
+		ConfigurationSaving = {
+			Enabled = true,
+			FolderName = "ZLN_Hub",
+			FileName = "GrannyMP"
+		},
 		KeySystem = false,
 		ToggleUIKeybind = "K"
 	})
@@ -33,7 +39,9 @@ local function loadGui()
 		if v:FindFirstChild("InteractRemote") then
 			Tab1:CreateButton({
 				Name = "Get " .. v.Name,
-				Callback = function() v.InteractRemote:FireServer(Player) end,
+				Callback = function()
+					v.InteractRemote:FireServer(Player)
+				end,
 			})
 		end
 	end
@@ -45,7 +53,22 @@ local function loadGui()
 			if v:FindFirstChild("InteractRemote") then
 				Tab2:CreateButton({
 					Name = "Get " .. v.Name,
-					Callback = function() v.InteractRemote:FireServer(Player) end,
+					Callback = function()
+						v.InteractRemote:FireServer(Player)
+					end,
+				})
+			end
+		end
+	end
+	if game.PlaceId == 10384858885 then
+		local stonesFolder = workspace:FindFirstChild("Stones")
+		for _, v in pairs(stones:GetChildren()) do
+			if v:FindFirstChild("InteractRemote") then
+				Tab2:CreateButton({
+					Name = "Get " .. v.Name,
+					Callback = function()
+						v.InteractRemote:FireServer(Player)
+					end,
 				})
 			end
 		end
@@ -58,14 +81,16 @@ local function loadGui()
 			if v:FindFirstChild("InteractRemote") then
 				Tab3:CreateButton({
 					Name = "Get " .. v.Name,
-					Callback = function() v.InteractRemote:FireServer(Player) end,
+					Callback = function()
+						v.InteractRemote:FireServer(Player)
+					end,
 				})
 			end
 		end
 	end
 
 	Connection = workspace.ChildAdded:Connect(function(child)
-		if child:FindFirstChild("Furnitures") then
+		if string.find(child.Name, "Preset") and child:FindFirstChild("Furnitures") then
 			loadGui()
 		end
 	end)
