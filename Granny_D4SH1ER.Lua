@@ -1,5 +1,5 @@
 local Player = game:GetService("Players").LocalPlayer
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu'))()
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Connection
 
 local function loadGui()
