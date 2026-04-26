@@ -11,7 +11,9 @@ local hooks = {
 }
 
 local function createItemButtons(tab, folder, filterName)
-	if not folder then return end
+	if not folder then
+		return
+	end
 	
 	for _, item in pairs(folder:GetChildren()) do
 		if item:FindFirstChild("InteractRemote") then
@@ -102,20 +104,18 @@ local function loadGui()
 			hooks.shotgunAmmo.active = Value
 			
 			if Value then
-local success, err = pcall(function()
-				local sus = game:GetService("Players").LocalPlayer.Backpack:WaitForChild("ShotgunAmmo")
-				
-				hooks.shotgunAmmo.hook = hookmetamethod(game, "__index", function(self, v)
-					if hooks.shotgunAmmo.active and self == sus and v == "Value" then
-						return 2
-					end
-					return hooks.shotgunAmmo.hook(self, v)
+				local success, err = pcall(function()
+					local sus = game:GetService("Players").LocalPlayer.Backpack:WaitForChild("ShotgunAmmo")
+					hooks.shotgunAmmo.hook = hookmetamethod(game, "__index", function(self, v)
+						if hooks.shotgunAmmo.active and self == sus and v == "Value" then
+							return 2
+						end
+						return hooks.shotgunAmmo.hook(self, v)
+					end)
 				end)
-end)
-
-if not success and err then
-warn(err)
-end
+				if not success and err then
+					warn(err)
+				end
 			end
 		end,
 	})
