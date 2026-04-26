@@ -95,13 +95,14 @@ local function loadGui()
 	-- OP Stuff Tab
 	local Tab4 = Window:CreateTab("OP Stuff", 4483362458)
 	Tab4:CreateToggle({
-		Name = "Infinite Shotgun Ammo",
+		Name = "Infinite Shotgun Ammo (DO NOT EQUIP SHOTGUN WHEN TURNING ON!)",
 		CurrentValue = false,
 		Flag = "InfiniteShotgunAmmo",
 		Callback = function(Value)
 			hooks.shotgunAmmo.active = Value
 			
 			if Value then
+local success, err = pcall(function()
 				local sus = game:GetService("Players").LocalPlayer.Backpack:WaitForChild("ShotgunAmmo")
 				
 				hooks.shotgunAmmo.hook = hookmetamethod(game, "__index", function(self, v)
@@ -110,6 +111,11 @@ local function loadGui()
 					end
 					return hooks.shotgunAmmo.hook(self, v)
 				end)
+end)
+
+if not success and err then
+warn(err)
+end
 			end
 		end,
 	})
