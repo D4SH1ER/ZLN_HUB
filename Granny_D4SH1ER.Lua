@@ -97,7 +97,7 @@ local function loadGui()
 	-- OP Stuff Tab
 	local Tab4 = Window:CreateTab("OP Stuff", 4483362458)
 	Tab4:CreateToggle({
-		Name = "Infinite Shotgun Ammo (DO NOT EQUIP SHOTGUN WHEN TURNING ON!)",
+		Name = "Infinite Shotgun Ammo (DO NOT EQUIP SHOTGUN WHEN TURNING ON AND TAKE 1 BULLET FIRST!)",
 		CurrentValue = false,
 		Flag = "InfiniteShotgunAmmo",
 		Callback = function(Value)
