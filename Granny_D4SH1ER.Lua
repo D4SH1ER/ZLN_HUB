@@ -62,7 +62,7 @@ local function loadGui()
 	end
 	if game.PlaceId == 10384858885 then
 		local stonesFolder = workspace:FindFirstChild("Stones")
-		for _, v in pairs(stones:GetChildren()) do
+		for _, v in pairs(stonesFolder:GetChildren()) do
 			if v:FindFirstChild("InteractRemote") then
 				Tab2:CreateButton({
 					Name = "Get " .. v.Name,
