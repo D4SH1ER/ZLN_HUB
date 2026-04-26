@@ -2,14 +2,32 @@ local Player = game:GetService("Players").LocalPlayer
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Connection
 
-local function loadGui()
-	if Connection then
-		Connection:Disconnect()
-	end
-	if game:GetService("CoreGui"):FindFirstChild("Rayfield") then
-		game:GetService("CoreGui").Rayfield:Destroy()
-	end
+-- Hook management
+local hooks = {
+	shotgunAmmo = {
+		active = false,
+		hook = nil
+	}
+}
 
+-- Helper function to create item buttons for a tab
+local function createItemButtons(tab, folder, filterName)
+	if not folder then return end
+	
+	for _, item in pairs(folder:GetChildren()) do
+		if item:FindFirstChild("InteractRemote") then
+			tab:CreateButton({
+				Name = "Get " .. item.Name,
+				Callback = function()
+					item.InteractRemote:FireServer(Player)
+				end,
+			})
+		end
+	end
+end
+
+-- Wait for preset to load
+local function waitForPreset()
 	local CurrentPreset
 	repeat
 		for _, v in pairs(workspace:GetChildren()) do
@@ -20,6 +38,18 @@ local function loadGui()
 		end
 		task.wait()
 	until CurrentPreset ~= nil
+	return CurrentPreset
+end
+
+local function loadGui()
+	if Connection then
+		Connection:Disconnect()
+	end
+	if game:GetService("CoreGui"):FindFirstChild("Rayfield") then
+		game:GetService("CoreGui").Rayfield:Destroy()
+	end
+
+	local CurrentPreset = waitForPreset()
 
 	local Window = Rayfield:CreateWindow({
 		Name = "ZLN HUB | Granny: Multiplayer",
@@ -34,60 +64,56 @@ local function loadGui()
 		ToggleUIKeybind = "K"
 	})
 
+	-- Main/Items Tab
 	local Tab1 = Window:CreateTab("Main/Items", 4483362458)
-	for _, v in pairs(CurrentPreset:GetChildren()) do
-		if v:FindFirstChild("InteractRemote") then
+	createItemButtons(Tab1, CurrentPreset)
+	
+	-- Get Shotgun button
+	for _, v in pairs(CurrentPreset:GetDescendants()) do
+		if v.Name == "Shotgun" and v:FindFirstChild("InteractRemote") then
 			Tab1:CreateButton({
-				Name = "Get " .. v.Name,
+				Name = "Get Shotgun",
 				Callback = function()
 					v.InteractRemote:FireServer(Player)
 				end,
 			})
+			break
 		end
 	end
 
+	-- Ammo Tab
 	local Tab2 = Window:CreateTab("Ammo", 4483362458)
-	local ammoFolder = CurrentPreset:FindFirstChild("Ammo")
-	if ammoFolder then
-		for _, v in pairs(ammoFolder:GetChildren()) do
-			if v:FindFirstChild("InteractRemote") then
-				Tab2:CreateButton({
-					Name = "Get " .. v.Name,
-					Callback = function()
-						v.InteractRemote:FireServer(Player)
-					end,
-				})
-			end
-		end
-	end
+	createItemButtons(Tab2, CurrentPreset:FindFirstChild("Ammo"))
+	
 	if game.PlaceId == 10384858885 then
-		local stonesFolder = workspace:FindFirstChild("Stones")
-		for _, v in pairs(stonesFolder:GetChildren()) do
-			if v:FindFirstChild("InteractRemote") then
-				Tab2:CreateButton({
-					Name = "Get " .. v.Name,
-					Callback = function()
-						v.InteractRemote:FireServer(Player)
-					end,
-				})
-			end
-		end
+		createItemButtons(Tab2, workspace:FindFirstChild("Stones"))
 	end
 
+	-- Weapons/Other Items Tab
 	local Tab3 = Window:CreateTab("Weapons/Other Items", 4483362458)
-	local generalItems = workspace:FindFirstChild("General Items")
-	if generalItems then
-		for _, v in pairs(generalItems:GetChildren()) do
-			if v:FindFirstChild("InteractRemote") then
-				Tab3:CreateButton({
-					Name = "Get " .. v.Name,
-					Callback = function()
-						v.InteractRemote:FireServer(Player)
-					end,
-				})
+	createItemButtons(Tab3, workspace:FindFirstChild("General Items"))
+
+	-- OP Stuff Tab
+	local Tab4 = Window:CreateTab("OP Stuff", 4483362458)
+	Tab4:CreateToggle({
+		Name = "Infinite Shotgun Ammo",
+		CurrentValue = false,
+		Flag = "InfiniteShotgunAmmo",
+		Callback = function(Value)
+			hooks.shotgunAmmo.active = Value
+			
+			if Value then
+				local sus = game:GetService("Players").LocalPlayer.Backpack:WaitForChild("ShotgunAmmo")
+				
+				hooks.shotgunAmmo.hook = hookmetamethod(game, "__index", function(self, v)
+					if hooks.shotgunAmmo.active and self == sus and v == "Value" then
+						return 2
+					end
+					return hooks.shotgunAmmo.hook(self, v)
+				end)
 			end
-		end
-	end
+		end,
+	})
 
 	Connection = workspace.ChildAdded:Connect(function(child)
 		if string.find(child.Name, "Preset") and child:FindFirstChild("Furnitures") then
