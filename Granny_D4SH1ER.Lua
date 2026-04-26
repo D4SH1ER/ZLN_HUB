@@ -10,7 +10,6 @@ local hooks = {
 	}
 }
 
--- Helper function to create item buttons for a tab
 local function createItemButtons(tab, folder, filterName)
 	if not folder then return end
 	
