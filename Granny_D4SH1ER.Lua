@@ -68,19 +68,6 @@ local function loadGui()
 	-- Main/Items Tab
 	local Tab1 = Window:CreateTab("Main/Items", 4483362458)
 	createItemButtons(Tab1, CurrentPreset)
-	
-	-- Get Shotgun button
-	for _, v in pairs(CurrentPreset:GetDescendants()) do
-		if v.Name == "Shotgun" and v:FindFirstChild("InteractRemote") then
-			Tab1:CreateButton({
-				Name = "Get Shotgun",
-				Callback = function()
-					v.InteractRemote:FireServer(Player)
-				end,
-			})
-			break
-		end
-	end
 
 	-- Ammo Tab
 	local Tab2 = Window:CreateTab("Ammo", 4483362458)
@@ -93,6 +80,19 @@ local function loadGui()
 	-- Weapons/Other Items Tab
 	local Tab3 = Window:CreateTab("Weapons/Other Items", 4483362458)
 	createItemButtons(Tab3, workspace:FindFirstChild("General Items"))
+
+-- Get Shotgun button
+	for _, v in pairs(CurrentPreset:GetDescendants()) do
+		if v.Name == "Shotgun" and v:FindFirstChild("InteractRemote") then
+			Tab3:CreateButton({
+				Name = "Get Shotgun",
+				Callback = function()
+					v.InteractRemote:FireServer(Player)
+				end,
+			})
+			break
+		end
+	end
 
 	-- OP Stuff Tab
 	local Tab4 = Window:CreateTab("OP Stuff", 4483362458)
