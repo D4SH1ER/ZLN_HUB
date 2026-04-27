@@ -89,14 +89,14 @@ local function loadGui()
 	-- OP Stuff Tab
 	local Tab4 = Window:CreateTab("OP Stuff", 4483362458)
 	Tab4:CreateButton({
-		Name = "Shotgun Infinite Ammo [MIGHT CRASH YOUR GAME!]",
+		Name = "Shotgun Infinite Ammo",
 		Callback = function()
 			local sus = game:GetService("Players").LocalPlayer.Backpack.ShotgunAmmo
-			hookmetamethod(game, "__index", function(self, v)
+			local hook; hook = hookmetamethod(game, "__index", function(self, v)
 				if self == sus and v == "Value" then
 					return 2
 				end
-				return rawget(self, v)
+				return hook(self, v)
 			end)
 		end,
 	})
