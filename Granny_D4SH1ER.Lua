@@ -2,14 +2,6 @@ local Player = game:GetService("Players").LocalPlayer
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Connection
 
--- Hook management
-local hooks = {
-	shotgunAmmo = {
-		active = false,
-		hook = nil
-	}
-}
-
 local function createItemButtons(tab, folder, filterName)
 	if not folder then
 		return
@@ -96,30 +88,18 @@ local function loadGui()
 
 	-- OP Stuff Tab
 	local Tab4 = Window:CreateTab("OP Stuff", 4483362458)
-	Tab4:CreateToggle({
-		Name = "Infinite Shotgun Ammo (DO NOT EQUIP SHOTGUN WHEN TURNING ON AND TAKE 1 BULLET FIRST!)",
-		CurrentValue = false,
-		Flag = "InfiniteShotgunAmmo",
-		Callback = function(Value)
-			hooks.shotgunAmmo.active = Value
-			
-			if Value then
-				local success, err = pcall(function()
-					local sus = game:GetService("Players").LocalPlayer.Backpack:WaitForChild("ShotgunAmmo")
-					hooks.shotgunAmmo.hook = hookmetamethod(game, "__index", function(self, v)
-						if hooks.shotgunAmmo.active and self == sus and v == "Value" then
-							return 2
-						end
-						return hooks.shotgunAmmo.hook(self, v)
-					end)
-				end)
-				if not success and err then
-					warn(err)
+	Tab4:CreateButton({
+		Name = "Shotgun Infinite Ammo",
+		Callback = function()
+			local sus = game:GetService("Players").LocalPlayer.Backpack.ShotgunAmmo
+			hookmetamethod(game, "__index", function(self, v)
+				if self == sus and v == "Value" then
+					return 2
 				end
-			end
+				return rawget(self, v)
+			end)
 		end,
 	})
-
 	Connection = workspace.ChildAdded:Connect(function(child)
 		if string.find(child.Name, "Preset") and child:FindFirstChild("Furnitures") then
 			loadGui()
